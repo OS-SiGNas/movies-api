@@ -184,24 +184,61 @@ this.#router.post('/users', schemaValidator(createSchema), postUser)
 
 ## Modules Movies and Comments
 
-### 1 - Movies:
-
-#### 1.1 Endpoints
+### 2 - Movies:
 
 ```
-    Public:
-    GET: '/movies/all'
-    GET: '/movies/one/:_id'
+Public:
 
-    Users:
-    POST:  '/movies/one'
-    PUT:   '/movies/one/:_id'
-    DELETE '/movies/one/:_id'
+=> GET: '/movies/all'
+return all movies approved
 
-    Admin:
-    GET: '/movies/user/:_id'
-    GET: '/movies/notapproved'
-    PUT: /movies/notapproved'
+=> GET: '/movies/one/:_id'
+return detail for one movie without comments
+
+Users:
+
+=> POST:  '/movies/one'
+add movie to list for revision to approve
+
+=> PUT:   '/movies/one/:_id'
+update movie information
+
+=> DELETE '/movies/one/:_id'
+delete movie
+
+Admin:
+
+=> GET: '/movies/user/:_id'
+return all movies add by any user
+
+=> GET: '/movies/notapproved'
+return all movies not approved for revision
+
+=> PUT: /movies/notapproved'
+receive movieId[] in request.body for approve multiple movies in a single request and return moviesApproved[]
 ```
 
-#### 1.2 Request and Response
+### 3 - Comments:
+
+```
+Public:
+=> GET: '/comments/movie/:movieId'
+returns the comments of a particular movie along with its rating, use this endpoint together with /movies/all
+
+User:
+=> POST: '/comments/movie/:movieId'
+add comment and score in a particular movie
+
+=> GET: '/comments/one/:_id'
+return single comment by id
+
+=> PUT: '/comments/one/:_id'
+update comment and return comment updated
+
+=> DELETE: '/comments/one/:_id'
+delete comment
+
+GET: '/comments/user/:userId', checkSession('admin')
+return all comments of a particular user
+
+```
