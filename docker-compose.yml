@@ -1,0 +1,18 @@
+version: '3.1'
+
+services:
+  # api:
+  # container_name: node-api
+  # restart: always
+  # build: .
+  # ports:
+  # - '3000:3000'
+  # links:
+  # - mongo
+  # volumes:
+  # - .:/app
+  mongo:
+    # container_name: mongodb
+    image: mongo
+    ports:
+      - '27017:27017'
