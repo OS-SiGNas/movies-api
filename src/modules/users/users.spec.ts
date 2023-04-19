@@ -1,6 +1,6 @@
 import req from 'supertest';
 import app from '../../index';
-import { testUserData } from '../../server/Settings';
+import { testAdminData } from '../../server/Settings';
 
 const headers = { Authorization: '' };
 let userId = '';
@@ -45,7 +45,7 @@ describe('Tesing Users enpoints', () => {
     });
 
     test('Login works', async () => {
-      const res = await req(app).post('/auth').send(testUserData);
+      const res = await req(app).post('/auth').send(testAdminData);
       expect(res.status).toBe(200);
       expect(res.body.data.token).toBeDefined();
 
