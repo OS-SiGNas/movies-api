@@ -184,6 +184,38 @@ this.#router.post('/users', schemaValidator(createSchema), postUser)
 
 ## Modules Movies and Comments
 
+### 1 - User and Auth
+
+```
+Public
+=> POST: '/auth'
+received { username, password } return user and token session
+
+=> POST: '/register'
+received user in request.body without attribute isActive(default is false) or rol (default is 'user')
+
+User
+=> GET: '/auth'
+this endpoint is only for validate token expired time, return 204 for OK NO CONTENT, or Forbidden 403
+
+Admin
+=> GET: '/users'
+return all array IUser
+
+=> GET: '/users/:_id'
+return particular user by id
+
+=> POST: '/users'
+received user with all attributes
+
+=> PUT: '/users/:_id'
+update user with any atribute
+
+=> delete: '/users/:_id'
+delete users by id
+
+```
+
 ### 2 - Movies:
 
 ```
