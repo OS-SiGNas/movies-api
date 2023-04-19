@@ -1,6 +1,6 @@
 import type UsersModel from '../../domain/UsersModel';
 import type { IUser } from '../../domain/User';
-import type { IUserService } from '../../domain/UsersService';
+import type { IUserService } from '../../domain/IUsersService';
 import type { SearchOneUserParams, SearchAllUsersParams } from '../types';
 
 interface Dependences {
@@ -25,6 +25,12 @@ export default class MongoUsersRepository implements IUserService {
     const equals = await this.#comparePassword(password, userMatched.password);
     if (!equals) return null;
     return userMatched;
+  };
+
+  public register = async (user: IUser): Promise<IUser> => {
+    const encryptedPassword = await this.#encryptPassword(user.password);
+    const newUser = new this.#model({ ...user, password: encryptedPassword, roles: ['user'], active: false });
+    return await newUser.save();
   };
 
   public getOneUser = async (search: SearchOneUserParams): Promise<IUser | null> => {

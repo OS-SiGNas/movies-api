@@ -4,6 +4,7 @@ import type { AnyZodObject } from 'zod';
 
 export class UsersSchema {
   readonly loginSchema: AnyZodObject;
+  readonly registerSchema: AnyZodObject;
   readonly getOneSchema: AnyZodObject;
   readonly getAllSchema: AnyZodObject;
   readonly createSchema: AnyZodObject;
@@ -39,6 +40,18 @@ export class UsersSchema {
         .object({
           username: z.string().min(username.min, username.minError).max(username.max, username.maxError),
           password: z.string().min(password.min, password.minError).max(password.max, password.maxError),
+        })
+        .strict(),
+    });
+    // ----------------------------------------------
+    this.registerSchema = z.object({
+      body: z
+        .object({
+          username: z.string().min(username.min, username.minError).max(username.max, username.maxError),
+          password: z.string().min(password.min, password.minError).max(password.max, password.maxError),
+          email: z.string().email(),
+          name: z.string().min(name.min, name.minError).max(name.max, name.maxError),
+          telf: z.string(),
         })
         .strict(),
     });

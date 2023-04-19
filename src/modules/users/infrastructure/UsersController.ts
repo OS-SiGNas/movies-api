@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import type { IHttpResponse } from '../../shared/types';
-import type { IUserService } from '../domain/UsersService';
+import type { IUserService } from '../domain/IUsersService';
 import type { Rol } from '../domain/User';
 
 interface Dependences {
@@ -27,6 +27,15 @@ export default class UsersController {
       const { _id, email, name, roles, telf } = user;
       const token = this.#generateJwt(_id, roles);
       return this.#response.ok(res, { token, _id, email, username, name, roles, telf });
+    } catch (error) {
+      return this.#response.error(res, error);
+    }
+  };
+
+  public register = async (req: Request, res: Response): Promise<Response> => {
+    try {
+      const newRegister = await this.#service.register(req.body);
+      return this.#response.ok(res, newRegister);
     } catch (error) {
       return this.#response.error(res, error);
     }

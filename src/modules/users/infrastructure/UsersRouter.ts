@@ -15,13 +15,16 @@ interface Dependences {
 export default class UsersRouter {
   readonly #router: Router;
   constructor({ router, controller, checkSession, schemaValidator, usersSchema }: Dependences) {
-    const { auth, getUsers, getUser, postUser, putUser, deleteUser, tokenValidator } = controller;
-    const { loginSchema, getOneSchema, getAllSchema, createSchema, updateSchema, deleteSchema } = usersSchema;
+    const { auth, register, getUsers, getUser, postUser, putUser, deleteUser, tokenValidator } = controller;
+    const { loginSchema, registerSchema, getOneSchema, getAllSchema, createSchema, updateSchema, deleteSchema } =
+      usersSchema;
 
     this.#router = router;
 
     this.#router
       .post('/auth', schemaValidator(loginSchema), auth)
+      .post('/register', schemaValidator(registerSchema), register)
+
       .get('/auth', checkSession('user'), tokenValidator)
 
       // => Protected routes with middleware
