@@ -126,7 +126,7 @@ ADMIN_TEST_PASSWORD=1111111111
 
 ### 1 - src/index.ts entry point with an IIFE
 
-### 2 - Initial server configuration such as environment variables are loaded into the config object in src/server/config.ts
+### 2 - Initial server configuration such as environment variables are loaded into the config object in src/server/Settings.ts
 
 ### 3 - Express configuration and modules are loaded into the server object in src/server/index.ts
 
@@ -139,9 +139,9 @@ ADMIN_TEST_PASSWORD=1111111111
 const modules: Modules = [users,notes, saludo, poke, otherRouterObject];
 ```
 
-## 5 - in the folder src/modules/share are the classes objects or functions shared by all the modules, such as the HttpResponse class or the ValidadorSchemas.
+### 5 - In the folder src/modules/share are the classes objects or functions shared by all the modules, such as the HttpResponse class or the ValidadorSchemas.
 
-## 7 - The model for user it's in src/modules/users/UserModel, you need create any user in your DB like this:
+### 6 - The model for user it's in src/modules/users/UserModel, you need create any user in your DB like this:
 
 ```
 {
@@ -155,7 +155,7 @@ const modules: Modules = [users,notes, saludo, poke, otherRouterObject];
 }
 ```
 
-## 8 - The user rols array are ["admin","user"] and are validate with the checkSession middleware.
+### 7 - The user rols array are ["admin","user"] and are validate with the checkSession middleware.
 
 ```
 this.#router.use('/users', checkSession('admin'))
@@ -163,11 +163,45 @@ this.#router.use('/users', checkSession('admin'))
 // the 'admin' Rol is required for all enpoints /users
 ```
 
-## 9 - The middleware checkSession is: type -> checkSession:(arg: Rol) => RequestHandler;
+### 8 - Security in Endpoints powered by The method AuthMiddleware.checkSession, is: type -> checkSession:(arg: Rol) => RequestHandler;
 
 ```
-const { checkSession } = new UsersMiddleware({ httpResponse, verifyJwt });
+const { checkSession } = new AuthMiddleware({ httpResponse, verifyJwt });
 
 // create instance like this, look in src/modules/users/index.ts for good example
-//
 ```
+
+### 9 - Security and integrity Request is validated and powered by class SchemaValidatorMiddleware implementing Zod library.
+
+```
+/*
+ that middleware is type:
+ schemaValidator: (arg: AnyZodObject) => RequestHandler;
+*/
+
+this.#router.post('/users', schemaValidator(createSchema), postUser)
+```
+
+## Modules Movies and Comments
+
+### 1 - Movies:
+
+#### 1.1 Endpoints
+
+```
+    Public:
+    GET: '/movies/all'
+    GET: '/movies/one/:_id'
+
+    Users:
+    POST:  '/movies/one'
+    PUT:   '/movies/one/:_id'
+    DELETE '/movies/one/:_id'
+
+    Admin:
+    GET: '/movies/user/:_id'
+    GET: '/movies/notapproved'
+    PUT: /movies/notapproved'
+```
+
+#### 1.2 Request and Response
