@@ -1,13 +1,13 @@
 import req from 'supertest';
 import app from '../../index';
-import { testUserData /* testAdminData */ } from '../../server/Settings';
+import { testUserData, testAdminData } from '../../server/Settings';
 
 const headers = { Authorization: '' };
 // let userId = '';
 
 describe('Comments Endpoints', () => {
   test('Users without auth can get comments movies', async () => {
-    const comment = await req(app).get('/comment/movie/643ec269d4773a21c58a4f76');
+    const comment = await req(app).get('/comments/movie/643ec269d4773a21c58a4f76');
     expect(comment.status).toBe(200);
   });
 
@@ -27,14 +27,14 @@ describe('Comments Endpoints', () => {
       };
 
       const newComment = await req(app)
-        .post('/comment/movie/643ec269d4773a21c58a4f76')
+        .post('/comments/movie/643ec269d4773a21c58a4f76')
         .send(commentToSend)
         .set(headers);
       expect(newComment.status).toBe(200);
       expect(newComment.body.data._id).toBeDefined();
 
       const updatedComment = await req(app)
-        .put(`/comment/one/${newComment.body.data._id}`)
+        .put(`/comments/one/${newComment.body.data._id}`)
         .send({ score: 8 })
         .set(headers);
       console.log(updatedComment.body);
@@ -42,20 +42,26 @@ describe('Comments Endpoints', () => {
       //   expect(updatedComment.body.data.score).toBe(8);
       expect(updatedComment.body.data.score).toBe(10); // FIX
 
-      const deleteComment = await req(app).delete(`/comment/one/${updatedComment.body.data._id}`).set(headers);
+      const deleteComment = await req(app).delete(`/comments/one/${updatedComment.body.data._id}`).set(headers);
       expect(deleteComment.status).toBe(204);
     });
   });
 
   describe('Only Admin can see all comment by any user', () => {
     test("Users without Admin rol can't list comments from userId", async () => {
-      const res = await req(app).get('/comment/user/asdadas').set(headers);
+      const res = await req(app).get('/comments/user/asdadas').set(headers);
       expect(res.status).toBe(403);
     });
 
     test('Getting all comment from userId', async () => {
-      const admin;
-      const comments = await req(app).get('/comment/user/asdadas').set(headers);
+      const admin = await req(app).post('/auth').send(testAdminData);
+      expect(admin.status).toBe(200);
+      // wink wink
+      headers.Authorization = `Bearer ${admin.body.data.token}`;
+
+      const comments = await req(app).get(`/comments/user/${admin.body.data._id}`).set(headers);
+      expect(comments.status).toBe(200);
+      expect(comments.body.data).toBeInstanceOf(Array);
     });
   });
 });

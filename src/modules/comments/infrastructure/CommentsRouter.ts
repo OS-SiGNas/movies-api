@@ -20,15 +20,15 @@ export default class CommentsRouter {
     const { getOneSchema, getByUserSchema, getByMovieSchema, createSchema } = schemas;
 
     this.#router
-      .get('/comment/user/:userId', checkSession('admin'), schemaValidator(getByUserSchema), getUserComments)
+      .get('/comments/user/:userId', checkSession('admin'), schemaValidator(getByUserSchema), getUserComments)
 
-      // .use('/comment', checkSession('user'))
-      .get('/comment/movie/:movieId', schemaValidator(getByMovieSchema), getMovieComments)
-      .post('/comment/movie/:movieId', checkSession('user'), schemaValidator(createSchema), postMovieComment)
+      // .use('/comments', checkSession('user'))
+      .get('/comments/movie/:movieId', schemaValidator(getByMovieSchema), getMovieComments)
+      .post('/comments/movie/:movieId', checkSession('user'), schemaValidator(createSchema), postMovieComment)
 
-      .get('/comment/one/:_id', checkSession('user'), schemaValidator(getOneSchema), getComment)
-      .put('/comment/one/:_id', checkSession('user'), putComment)
-      .delete('/comment/one/:_id', checkSession('user'), deleteComment);
+      .get('/comments/one/:_id', checkSession('user'), schemaValidator(getOneSchema), getComment)
+      .put('/comments/one/:_id', checkSession('user'), putComment)
+      .delete('/comments/one/:_id', checkSession('user'), deleteComment);
   }
 
   get router(): Router {
