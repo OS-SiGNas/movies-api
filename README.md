@@ -136,7 +136,7 @@ ADMIN_TEST_PASSWORD=1111111111
 /***************************************************************
                 Add Routers modules in the array
 ****************************************************************/
-const modules: Modules = [users,notes, saludo, poke, otherRouterObject];
+const modules: Modules = [users, movies, comments, otherRouterObject];
 ```
 
 ### 5 - In the folder src/modules/share are the classes objects or functions shared by all the modules, such as the HttpResponse class or the ValidadorSchemas.
@@ -153,6 +153,8 @@ const modules: Modules = [users,notes, saludo, poke, otherRouterObject];
 	"active": true,
 	"roles": ["admin","user"]
 }
+
+// or you can use the /register endpoint and then add in DB the role of "admin" in the roles array
 ```
 
 ### 7 - The user rols array are ["admin","user"] and are validate with the checkSession middleware.
