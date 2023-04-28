@@ -112,4 +112,4 @@ export class UsersSchema {
   } // end contructor
 } // end class
 
-export const usersSchema = new UsersSchema();
+export const userSchemas = new UsersSchema();

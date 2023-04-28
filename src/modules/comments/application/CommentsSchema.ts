@@ -49,4 +49,4 @@ export class CommentSchema {
   }
 }
 
-export const commentsSchema = new CommentSchema();
+export const commentSchemas = new CommentSchema();

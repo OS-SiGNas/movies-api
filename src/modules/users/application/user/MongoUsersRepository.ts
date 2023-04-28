@@ -51,9 +51,7 @@ export default class MongoUsersRepository implements IUserService {
   };
 
   public updateUserById = async (_id: string, user: IUser): Promise<IUser | null> => {
-    if (user.password !== undefined) {
-      user.password = await this.#encryptPassword(user.password);
-    }
+    if (user.password !== undefined) user.password = await this.#encryptPassword(user.password);
     const userUpdated = await this.#model.findByIdAndUpdate(_id, user, { new: true });
     return userUpdated;
   };

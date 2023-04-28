@@ -16,7 +16,7 @@ class Settings implements ISettings {
   readonly #usernameTestAdmin: string | undefined;
   readonly #passwordTestAdmin: string | undefined;
   constructor(env: NodeJS.ProcessEnv) {
-    // console.log('===============config===============')
+    // console.log('=============== Config ===============')
     this.#environment = env.NODE_ENV as Environment | undefined;
     this.#port = env.PORT;
     this.#mongoUriHeader = env.MONGO_URI_HEADER;
@@ -78,6 +78,4 @@ class Settings implements ISettings {
   }
 }
 
-export const { environment, port, dbUri, jwtSecretKey, jwtSignOptions, testUserData, testAdminData } = new Settings(
-  process.env
-);
+export const { environment, port, dbUri, jwtSecretKey, jwtSignOptions, testUserData, testAdminData } = new Settings(process.env);

@@ -8,11 +8,11 @@ import CommentsController from './infrastructure/CommentsController';
 // application
 import CommentsSerice from './application/MongoCommentsRepository';
 import { ratingCalculator } from './application/ratingCalculator';
-import { commentsSchema as schemas } from './application/CommentsSchema';
+import { commentSchemas } from './application/CommentsSchema';
 // domain
 import { CommentsModel as model } from './domain/CommentsModel';
 
 const service = new CommentsSerice({ model, ratingCalculator });
 const controller = new CommentsController({ httpResponse, service });
 
-export default new CommentsRouter({ router: Router(), controller, checkSession, schemaValidator, schemas }).router;
+export default new CommentsRouter({ router: Router(), controller, checkSession, schemaValidator, commentSchemas }).router;

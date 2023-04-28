@@ -66,7 +66,7 @@ export default class MoviesController {
     }
   };
 
-  public putNotApprovedMovies = async (req: Request, res: Response): Promise<Response> => {
+  public putApproveMovies = async (req: Request, res: Response): Promise<Response> => {
     try {
       const aproved = await this.#service.approveMovies(req.body);
       return this.#response.ok(res, aproved);

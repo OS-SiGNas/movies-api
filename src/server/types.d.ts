@@ -12,6 +12,7 @@ export interface ISettings {
   jwtSecretKey: string;
   jwtSignOptions: SignOptions;
   testUserData: { username: string; password: string } | undefined;
+  testAdminData: { username: string; password: string } | undefined;
 }
 
 export interface DatabaseHandler {

@@ -50,10 +50,7 @@ describe('Movie Endpoints', () => {
       expect(resPost.status).toBe(200);
       expect(resPost.body.data.isApproved).toBe(false);
 
-      const resPut = await req(app)
-        .put(`/movies/one/${resPost.body.data._id}`)
-        .send({ name: 'Blanca Nieves (2023)' })
-        .set(headers);
+      const resPut = await req(app).put(`/movies/one/${resPost.body.data._id}`).send({ name: 'Blanca Nieves (2023)' }).set(headers);
       expect(resPut.status).toBe(200);
       expect(resPut.body.data).toBeDefined();
       expect(resPut.body.data.isApproved).toBe(false);
@@ -67,7 +64,7 @@ describe('Movie Endpoints', () => {
       const resGet = await req(app).get('/movies/notapproved').set(headers);
       expect(resGet.status).toBe(403);
 
-      const movieApproved = await await req(app).put('/movies/notapproved').set(headers);
+      const movieApproved = await req(app).put('/movies/notapproved').set(headers);
       expect(movieApproved.status).toBe(403);
     });
 

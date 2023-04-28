@@ -1,7 +1,7 @@
 import type { Mongoose } from 'mongoose';
 import type { DatabaseHandler, Environment } from './types';
 
-export default class Mongo implements DatabaseHandler {
+export default class MongoRepository implements DatabaseHandler {
   readonly #uri: string;
   readonly #mongoose: Mongoose;
   constructor(mongoose: Mongoose, uri: string, environment: Environment) {

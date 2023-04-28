@@ -11,7 +11,7 @@ interface Dependences {
   app: Application;
   port: number;
   environment: Environment;
-  mongo: DatabaseHandler;
+  database: DatabaseHandler;
   middlewares: RequestHandler[];
   modules: Modules;
 }
@@ -19,14 +19,14 @@ interface Dependences {
 export default class Server implements IServer {
   readonly #app: Application;
   readonly #port: number;
-  readonly #mongo: DatabaseHandler;
+  readonly #database: DatabaseHandler;
   readonly #environment: string;
   #httpServer: HttpServer;
-  constructor({ app, port, environment, mongo, middlewares, modules }: Dependences) {
+  constructor({ app, port, environment, database, middlewares, modules }: Dependences) {
     this.#environment = environment;
     this.#app = app;
     this.#port = port;
-    this.#mongo = mongo;
+    this.#database = database;
     // init
     this.#app.use(middlewares);
     this.#app.use(modules);
@@ -37,7 +37,7 @@ export default class Server implements IServer {
     const { port } = this.#httpServer.address() as { port: number };
     console.info(`\x1b[33m${this.#message()}\x1b[0m\nSERVER running on: http://localhost:${port}`);
     try {
-      await this.#mongo.connect();
+      await this.#database.connect();
     } catch (error) {
       console.error(error);
     }

@@ -48,4 +48,4 @@ export class MovieSchema {
   }
 }
 
-export const movieSchema = new MovieSchema();
+export const movieSchemas = new MovieSchema();

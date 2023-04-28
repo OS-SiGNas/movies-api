@@ -16,8 +16,7 @@ export default class AuthMiddleware {
     (req: Request, res: Response, next: NextFunction): Response | undefined => {
       const { authorization } = req.headers;
       if (authorization === undefined) return this.#response.badRequest(res, 'Missing authorization headers');
-      if (!authorization.includes('Bearer '))
-        return this.#response.badRequest(res, 'Malformed header, use "Bearer token"');
+      if (!authorization.includes('Bearer ')) return this.#response.badRequest(res, 'Malformed header, use "Bearer token"');
       const token = authorization.split(' ').pop();
       if (token === undefined) return this.#response.badRequest(res, 'Malformed header, use "Bearer token"');
       try {

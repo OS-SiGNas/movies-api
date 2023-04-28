@@ -7,11 +7,11 @@ import MoviesRouter from './infrastructure/MoviesRouter';
 import MoviesController from './infrastructure/MoviesController';
 import MoviesService from './application/MongoMoviesRepository';
 // application
-import { movieSchema as schemas } from './application/MovieSchema';
+import { movieSchemas } from './application/MovieSchema';
 // domain
-import { MoviesModel } from './domain/MoviesModel';
+import { MoviesModel as model } from './domain/MoviesModel';
 
-const service = new MoviesService({ model: MoviesModel });
+const service = new MoviesService({ model });
 const controller = new MoviesController({ httpResponse, service });
 
-export default new MoviesRouter({ router: Router(), controller, checkSession, schemaValidator, schemas }).router;
+export default new MoviesRouter({ router: Router(), controller, checkSession, schemaValidator, movieSchemas }).router;

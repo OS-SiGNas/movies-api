@@ -9,33 +9,51 @@ interface Dependences {
   controller: UsersController;
   checkSession: (arg: Rol) => RequestHandler;
   schemaValidator: (arg: AnyZodObject) => RequestHandler;
-  usersSchema: UsersSchema;
+  userSchemas: UsersSchema;
 }
 
 export default class UsersRouter {
   readonly #router: Router;
-  constructor({ router, controller, checkSession, schemaValidator, usersSchema }: Dependences) {
-    const { auth, register, getUsers, getUser, postUser, putUser, deleteUser, tokenValidator } = controller;
-    const { loginSchema, registerSchema, getOneSchema, getAllSchema, createSchema, updateSchema, deleteSchema } =
-      usersSchema;
-
+  readonly #controller: UsersController;
+  readonly #checkSession: (arg: Rol) => RequestHandler;
+  readonly #validate: (arg: AnyZodObject) => RequestHandler;
+  readonly #schemas: UsersSchema;
+  constructor({ router, controller, checkSession, schemaValidator, userSchemas }: Dependences) {
     this.#router = router;
-
-    this.#router
-      .post('/auth', schemaValidator(loginSchema), auth)
-      .post('/register', schemaValidator(registerSchema), register)
-
-      .get('/auth', checkSession('user'), tokenValidator)
-
-      // => Protected routes with middleware
-      .use('/users', checkSession('admin'))
-
-      .get('/users', schemaValidator(getAllSchema), getUsers)
-      .get('/users/:_id', schemaValidator(getOneSchema), getUser)
-      .post('/users', schemaValidator(createSchema), postUser)
-      .put('/users/:_id', schemaValidator(updateSchema), putUser)
-      .delete('/users/:_id', schemaValidator(deleteSchema), deleteUser);
+    this.#controller = controller;
+    this.#checkSession = checkSession;
+    this.#validate = schemaValidator;
+    this.#schemas = userSchemas;
+    // init
+    this.#public();
+    this.#user();
+    this.#admin();
   }
+
+  readonly #public = (): void => {
+    const { auth, register } = this.#controller;
+    const { loginSchema, registerSchema } = this.#schemas;
+    this.#router.post('/auth', this.#validate(loginSchema), auth);
+    this.#router.post('/register', this.#validate(registerSchema), register);
+  };
+
+  readonly #user = (): void => {
+    const { tokenValidator } = this.#controller;
+    const imUser = this.#checkSession('user');
+    this.#router.get('/auth', imUser, tokenValidator);
+  };
+
+  readonly #admin = (): void => {
+    const { getUser, getUsers, postUser, putUser, deleteUser } = this.#controller;
+    const { getAllSchema, getOneSchema, createSchema, updateSchema, deleteSchema } = this.#schemas;
+    const imAdmin = this.#checkSession('admin');
+    this.#router
+      .get('/users', imAdmin, this.#validate(getAllSchema), getUsers)
+      .get('/users/:_id', imAdmin, this.#validate(getOneSchema), getUser)
+      .post('/users', imAdmin, this.#validate(createSchema), postUser)
+      .put('/users/:_id', imAdmin, this.#validate(updateSchema), putUser)
+      .delete('/users/:_id', imAdmin, this.#validate(deleteSchema), deleteUser);
+  };
 
   get router(): Router {
     return this.#router;

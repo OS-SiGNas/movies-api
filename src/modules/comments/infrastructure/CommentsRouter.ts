@@ -9,27 +9,51 @@ interface Dependences {
   controller: CommentsController;
   checkSession: (arg: Rol) => RequestHandler;
   schemaValidator: (arg: AnyZodObject) => RequestHandler;
-  schemas: CommentSchema;
+  commentSchemas: CommentSchema;
 }
 
 export default class CommentsRouter {
-  #router: Router;
-  constructor({ router, controller, checkSession, schemaValidator, schemas }: Dependences) {
+  readonly #router: Router;
+  readonly #controller: CommentsController;
+  readonly #checkSession: (arg: Rol) => RequestHandler;
+  readonly #validate: (arg: AnyZodObject) => RequestHandler;
+  readonly #schemas: CommentSchema;
+  constructor({ router, controller, checkSession, schemaValidator, commentSchemas }: Dependences) {
     this.#router = router;
-    const { getComment, getMovieComments, getUserComments, postMovieComment, putComment, deleteComment } = controller;
-    const { getOneSchema, getByUserSchema, getByMovieSchema, createSchema } = schemas;
+    this.#controller = controller;
+    this.#checkSession = checkSession;
+    this.#validate = schemaValidator;
+    this.#schemas = commentSchemas;
 
-    this.#router
-      .get('/comments/user/:userId', checkSession('admin'), schemaValidator(getByUserSchema), getUserComments)
-
-      // .use('/comments', checkSession('user'))
-      .get('/comments/movie/:movieId', schemaValidator(getByMovieSchema), getMovieComments)
-      .post('/comments/movie/:movieId', checkSession('user'), schemaValidator(createSchema), postMovieComment)
-
-      .get('/comments/one/:_id', checkSession('user'), schemaValidator(getOneSchema), getComment)
-      .put('/comments/one/:_id', checkSession('user'), putComment)
-      .delete('/comments/one/:_id', checkSession('user'), deleteComment);
+    this.#public();
+    this.#user();
+    this.#admin();
   }
+
+  readonly #public = (): void => {
+    const { getMovieComments } = this.#controller;
+    const { getByMovieSchema } = this.#schemas;
+    this.#router.get('/comments/movie/:movieId', this.#validate(getByMovieSchema), getMovieComments);
+    // .use('/comments', checkSession('user'))
+  };
+
+  readonly #user = (): void => {
+    const { getComment, putComment, deleteComment, postMovieComment } = this.#controller;
+    const { getOneSchema, createSchema } = this.#schemas;
+    const imUser = this.#checkSession('user');
+    this.#router
+      .get('/comments/one/:_id', imUser, this.#validate(getOneSchema), getComment)
+      .put('/comments/one/:_id', imUser, putComment)
+      .delete('/comments/one/:_id', imUser, deleteComment)
+      .post('/comments/movie/:movieId', imUser, this.#validate(createSchema), postMovieComment);
+  };
+
+  readonly #admin = (): void => {
+    const { getUserComments } = this.#controller;
+    const { getByUserSchema } = this.#schemas;
+    const imAdmin = this.#checkSession('admin');
+    this.#router.get('/comments/user/:userId', imAdmin, this.#validate(getByUserSchema), getUserComments);
+  };
 
   get router(): Router {
     return this.#router;
