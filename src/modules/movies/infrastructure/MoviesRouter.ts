@@ -7,16 +7,16 @@ import type MoviesController from './MoviesController';
 interface Dependences {
   router: Router;
   controller: MoviesController;
-  checkSession: (arg: Rol) => RequestHandler;
-  schemaValidator: (arg: AnyZodObject) => RequestHandler;
+  checkSession: (rol: Rol) => RequestHandler;
+  schemaValidator: (schema: AnyZodObject) => RequestHandler;
   movieSchemas: MovieSchema;
 }
 
 export default class MoviesRouter {
   readonly #router: Router;
   readonly #controller: MoviesController;
-  readonly #checkSession: (arg: Rol) => RequestHandler;
-  readonly #validate: (arg: AnyZodObject) => RequestHandler;
+  readonly #checkSession: (rol: Rol) => RequestHandler;
+  readonly #validate: (schema: AnyZodObject) => RequestHandler;
   readonly #schemas: MovieSchema;
   constructor({ router, controller, checkSession, schemaValidator, movieSchemas }: Dependences) {
     this.#router = router;
@@ -24,7 +24,7 @@ export default class MoviesRouter {
     this.#checkSession = checkSession;
     this.#validate = schemaValidator;
     this.#schemas = movieSchemas;
-
+    // init endpoints
     this.#public();
     this.#user();
     this.#admin();
@@ -39,9 +39,9 @@ export default class MoviesRouter {
   };
 
   readonly #user = (): void => {
+    const imUser = this.#checkSession('user');
     const { postMovie, putMovie, deleteMovie } = this.#controller;
     const { createSchema, deleteSchema } = this.#schemas;
-    const imUser = this.#checkSession('user');
     this.#router
       .post('/movies/one', imUser, this.#validate(createSchema), postMovie)
       .put('/movies/one/:_id', imUser, putMovie)
@@ -49,13 +49,13 @@ export default class MoviesRouter {
   };
 
   readonly #admin = (): void => {
+    const imAdmin = this.#checkSession('admin');
     const { getNotApprovedMovies, putApproveMovies } = this.#controller;
     const { aproveSchema } = this.#schemas;
-    const imAdmin = this.#checkSession('admin');
     this.#router
-      // .get('/movies/user/:_id', isAdmin, getUserMovies)
       .get('/movies/notapproved', imAdmin, getNotApprovedMovies)
       .put('/movies/notapproved', imAdmin, this.#validate(aproveSchema), putApproveMovies);
+    // .get('/movies/user/:_id', isAdmin, getUserMovies)
   };
 
   get router(): Router {

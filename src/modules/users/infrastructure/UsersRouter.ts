@@ -7,16 +7,16 @@ import type { Rol } from '../domain/User';
 interface Dependences {
   router: Router;
   controller: UsersController;
-  checkSession: (arg: Rol) => RequestHandler;
-  schemaValidator: (arg: AnyZodObject) => RequestHandler;
+  checkSession: (rol: Rol) => RequestHandler;
+  schemaValidator: (schema: AnyZodObject) => RequestHandler;
   userSchemas: UsersSchema;
 }
 
 export default class UsersRouter {
   readonly #router: Router;
   readonly #controller: UsersController;
-  readonly #checkSession: (arg: Rol) => RequestHandler;
-  readonly #validate: (arg: AnyZodObject) => RequestHandler;
+  readonly #checkSession: (rol: Rol) => RequestHandler;
+  readonly #validate: (schema: AnyZodObject) => RequestHandler;
   readonly #schemas: UsersSchema;
   constructor({ router, controller, checkSession, schemaValidator, userSchemas }: Dependences) {
     this.#router = router;
@@ -24,7 +24,7 @@ export default class UsersRouter {
     this.#checkSession = checkSession;
     this.#validate = schemaValidator;
     this.#schemas = userSchemas;
-    // init
+    // init endpoint
     this.#public();
     this.#user();
     this.#admin();
@@ -38,15 +38,15 @@ export default class UsersRouter {
   };
 
   readonly #user = (): void => {
-    const { tokenValidator } = this.#controller;
     const imUser = this.#checkSession('user');
+    const { tokenValidator } = this.#controller;
     this.#router.get('/auth', imUser, tokenValidator);
   };
 
   readonly #admin = (): void => {
+    const imAdmin = this.#checkSession('admin');
     const { getUser, getUsers, postUser, putUser, deleteUser } = this.#controller;
     const { getAllSchema, getOneSchema, createSchema, updateSchema, deleteSchema } = this.#schemas;
-    const imAdmin = this.#checkSession('admin');
     this.#router
       .get('/users', imAdmin, this.#validate(getAllSchema), getUsers)
       .get('/users/:_id', imAdmin, this.#validate(getOneSchema), getUser)

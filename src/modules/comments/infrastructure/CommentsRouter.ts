@@ -7,16 +7,16 @@ import type { Rol } from '../../users/domain/User';
 interface Dependences {
   router: Router;
   controller: CommentsController;
-  checkSession: (arg: Rol) => RequestHandler;
-  schemaValidator: (arg: AnyZodObject) => RequestHandler;
+  checkSession: (rol: Rol) => RequestHandler;
+  schemaValidator: (schema: AnyZodObject) => RequestHandler;
   commentSchemas: CommentSchema;
 }
 
 export default class CommentsRouter {
   readonly #router: Router;
   readonly #controller: CommentsController;
-  readonly #checkSession: (arg: Rol) => RequestHandler;
-  readonly #validate: (arg: AnyZodObject) => RequestHandler;
+  readonly #checkSession: (rol: Rol) => RequestHandler;
+  readonly #validate: (schema: AnyZodObject) => RequestHandler;
   readonly #schemas: CommentSchema;
   constructor({ router, controller, checkSession, schemaValidator, commentSchemas }: Dependences) {
     this.#router = router;
@@ -38,9 +38,9 @@ export default class CommentsRouter {
   };
 
   readonly #user = (): void => {
+    const imUser = this.#checkSession('user');
     const { getComment, putComment, deleteComment, postMovieComment } = this.#controller;
     const { getOneSchema, createSchema } = this.#schemas;
-    const imUser = this.#checkSession('user');
     this.#router
       .get('/comments/one/:_id', imUser, this.#validate(getOneSchema), getComment)
       .put('/comments/one/:_id', imUser, putComment)
@@ -49,9 +49,9 @@ export default class CommentsRouter {
   };
 
   readonly #admin = (): void => {
+    const imAdmin = this.#checkSession('admin');
     const { getUserComments } = this.#controller;
     const { getByUserSchema } = this.#schemas;
-    const imAdmin = this.#checkSession('admin');
     this.#router.get('/comments/user/:userId', imAdmin, this.#validate(getByUserSchema), getUserComments);
   };
 

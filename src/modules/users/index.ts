@@ -21,4 +21,10 @@ const service = new UsersService({ model, comparePassword, encryptPassword });
 const controller = new UsersController({ httpResponse, service, generateJwt });
 
 // Module User Router
-export default new UsersRouter({ router: Router(), controller, checkSession, schemaValidator, userSchemas }).router;
+export default new UsersRouter({
+  router: Router(),
+  controller,
+  checkSession,
+  schemaValidator,
+  userSchemas,
+}).router;
