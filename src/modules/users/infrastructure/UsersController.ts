@@ -54,7 +54,6 @@ export default class UsersController {
 
   public getUsers = async (req: Request, res: Response): Promise<Response> => {
     try {
-      // TODO validate req.query with zod and testrunner
       const users = await this.#service.getAllUsers({ ...req.query });
       return this.#response.ok(res, users);
     } catch (error) {

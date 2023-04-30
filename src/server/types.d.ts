@@ -1,9 +1,5 @@
 import type { SignOptions } from 'jsonwebtoken';
 
-export interface IServer {
-  run: () => Promise<void>;
-}
-
 type Environment = 'dev' | 'test' | 'prod';
 export interface ISettings {
   environment: Environment;
@@ -13,6 +9,10 @@ export interface ISettings {
   jwtSignOptions: SignOptions;
   testUserData: { username: string; password: string } | undefined;
   testAdminData: { username: string; password: string } | undefined;
+}
+
+export interface IServer {
+  run: () => Promise<void>;
 }
 
 export interface DatabaseHandler {

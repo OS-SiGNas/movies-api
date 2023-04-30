@@ -2,8 +2,8 @@ import { ZodError } from 'zod';
 import { httpResponse } from './HttpResponse';
 
 import type { Request, Response, NextFunction, RequestHandler } from 'express';
-import type { IHttpResponse } from './types';
 import type { AnyZodObject } from 'zod';
+import type { IHttpResponse } from './types';
 
 class ValidatorMiddleware {
   #response: IHttpResponse;

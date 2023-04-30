@@ -11,7 +11,7 @@ export default class MongoRepository implements DatabaseHandler {
     this.#mongoose.connection.on('error', this.#logger('Connection error'));
   }
 
-  public readonly connect = async (): Promise<void> => {
+  public connect = async (): Promise<void> => {
     this.#mongoose.set('strictQuery', false);
     await this.#mongoose.connect(this.#uri);
   };

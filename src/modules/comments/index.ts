@@ -15,4 +15,10 @@ import { CommentsModel as model } from './domain/CommentsModel';
 const service = new CommentsSerice({ model, ratingCalculator });
 const controller = new CommentsController({ httpResponse, service });
 
-export default new CommentsRouter({ router: Router(), controller, checkSession, schemaValidator, commentSchemas }).router;
+export default new CommentsRouter({
+  router: Router(),
+  controller,
+  checkSession,
+  schemaValidator,
+  commentSchemas,
+}).router;

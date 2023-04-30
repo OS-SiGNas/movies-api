@@ -14,4 +14,10 @@ import { MoviesModel as model } from './domain/MoviesModel';
 const service = new MoviesService({ model });
 const controller = new MoviesController({ httpResponse, service });
 
-export default new MoviesRouter({ router: Router(), controller, checkSession, schemaValidator, movieSchemas }).router;
+export default new MoviesRouter({
+  router: Router(),
+  controller,
+  checkSession,
+  schemaValidator,
+  movieSchemas,
+}).router;
